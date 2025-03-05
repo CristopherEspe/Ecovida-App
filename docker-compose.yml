@@ -15,7 +15,7 @@ services:
       retries: 15
       start_period: 2s
   msvc-auth:
-    container_name: auth-service
+    container_name: msvc-auth
     build: ./backend/msvc-auth
     restart: always
     ports:
@@ -47,10 +47,10 @@ services:
     depends_on:
       eureka-service:
         condition: service_healthy
-      auth-service:
+      msvc-auth:
         condition: service_healthy
     environment:
-      - AUTH_SERVICE_URL=http://auth-service:8090
+      - AUTH_SERVICE_URL=http://msvc-auth:8090
       - EUREKA_SERVICE_URL=http://eureka-service:8761
       - USERS_SERVICE_URL=http://users-service:8081
       - PRODUCTS_SERVICE_URL=http://courses-service:8082
