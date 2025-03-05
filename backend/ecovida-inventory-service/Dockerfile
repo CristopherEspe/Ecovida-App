@@ -7,8 +7,5 @@ COPY ./target/*.jar application.jar
 
 EXPOSE 8083
 
-ENV SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/inventory_db
-ENV SPRING_DATASOURCE_USERNAME=ecovida-postgres
-ENV SPRING_DATASOURCE_PASSWORD=A2QjQxdSIs9rNJ8YbXewmraEcqMz45BDDSzVFjWzkw5XjxP9Q1
 
 ENTRYPOINT ["java", "-jar", "application.jar"]
