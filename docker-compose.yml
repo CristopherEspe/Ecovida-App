@@ -21,8 +21,6 @@ services:
     ports:
     - "8090:8090"
     depends_on:
-      eureka-service:
-        condition: service_healthy
       database-postgres-auth:
         condition: service_healthy
     environment:
@@ -45,8 +43,6 @@ services:
     ports:
     - "8080:8080"
     depends_on:
-      eureka-service:
-        condition: service_healthy
       msvc-auth:
         condition: service_healthy
     environment:
