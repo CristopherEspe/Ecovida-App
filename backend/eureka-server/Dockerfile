@@ -7,4 +7,4 @@ COPY ./target/*.jar application.jar
 
 EXPOSE 8761
 
-ENTRYPOINT ["java", "-jar", "eureka-server.jar"]
+ENTRYPOINT ["java", "-jar", "application.jar"]
