@@ -48,7 +48,7 @@ services:
       - PRODUCTS_SERVICE_URL=http://courses-service:8082
       - INVENTORY_SERVICE_URL=http://inventory-service:8083
       - ORDERS_SERVICE_URL=http://orders-service:8084
-      - eureka.client.service-url.defaultZone=http://eureka-service:8761/eurek
+      - eureka.client.service-url.defaultZone=http://eureka-service:8761/eureka/
   user-service:
     container_name: users-service
     build: ./backend/ecovida-user-service
@@ -86,6 +86,7 @@ services:
       - KEYCLOAK_ISSUER_URI=http://${KEYCLOAK_HOSTNAME}:8090/auth/realms/SpringBootKeycloak
       - EUREKA_URL=http://eureka-service:8761/eureka/
       - spring.security.oauth2.resourceserver.jwt.issuer-uri=http://gateway-service:8090/auth/realms/SpringBootKeycloak
+      - eureka.client.service-url.defaultZone=http://eureka-service:8761/eureka/
     healthcheck:
       test: "curl --fail --silent localhost:8082/actuator/health/readiness | grep UP || exit 1"
       interval: 2s
