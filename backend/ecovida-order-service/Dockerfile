@@ -3,7 +3,7 @@ LABEL maintainer="Cristopher Zambrano"
 
 WORKDIR /app
 
-COPY ./target/*.jar application.jar
+COPY ./target/ecovida-order-service-0.0.1-SNAPSHOT.jar application.jar
 
 EXPOSE 8084
 
