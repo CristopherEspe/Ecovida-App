@@ -9,11 +9,6 @@ services:
     - "8761:8761"
     environment:
       - eureka.instance.hostname=eureka-service
-    develop:
-      watch:
-        - action: sync+restart
-          path: ./backend/eureka-server/target/eureka-server-0.0.1-SNAPSHOT.jar
-          target: /app/application.jar
     healthcheck:
       test: "curl --fail --silent localhost:8004/actuator/health/readiness | grep UP || exit 1"
       interval: 2s
@@ -38,11 +33,6 @@ services:
       - KEYCLOAK_ADMIN=ecovida_supp
       - KEYCLOAK_ADMIN_PASSWORD=O8r3tP8wi4f2
       - KEYCLOAK_IMPORT_FILE=/app/default-realm.json
-    develop:
-      watch:
-        - action: sync+restart
-          path: ./backend/msvc-auth/target/msvc-auth-0.0.1-SNAPSHOT.jar
-          target: /app/application.jar
     healthcheck:
       test: "curl --fail --silent localhost:8003/actuator/health/readiness | grep UP || exit 1"
       interval: 2s
@@ -67,11 +57,6 @@ services:
       - PRODUCTS_SERVICE_URL=http://courses-service:8082
       - INVENTORY_SERVICE_URL=http://inventory-service:8083
       - ORDERS_SERVICE_URL=http://orders-service:8084
-    develop:
-      watch:
-        - action: sync+restart
-          path: ./backend/gateway-service/target/gateway-service-0.0.1-SNAPSHOT.jar
-          target: /app/application.jar
     healthcheck:
       test: "curl --fail --silent localhost:8000/actuator/health/readiness | grep UP || exit 1"
       interval: 2s
@@ -93,11 +78,6 @@ services:
       - spring.datasource.url=jdbc:postgresql://database-postgres:5432/users_db
       - KEYCLOAK_ISSUER_URI=http://${KEYCLOAK_HOSTNAME}:8090/auth/realms/SpringBootKeycloak
       - EUREKA_URL=http://eureka-service:8167/eureka/
-    develop:
-      watch:
-        - action: sync+restart
-          path: ./backend/ecovida-user-service/target/ecovida-user-service-0.0.1-SNAPSHOT.jar
-          target: /app/application.jar
     healthcheck:
       test: "curl --fail --silent localhost:8081/actuator/health/readiness | grep UP || exit 1"
       interval: 2s
@@ -119,11 +99,6 @@ services:
       - spring.datasource.url=jdbc:postgresql://database-postgres:5432/products_db
       - KEYCLOAK_ISSUER_URI=http://${KEYCLOAK_HOSTNAME}:8090/auth/realms/SpringBootKeycloak
       - EUREKA_URL=http://eureka-service:8761/eureka/
-    develop:
-      watch:
-        - action: sync+restart
-          path: ./backend/ecovida-product-service/target/ecovida-product-service-0.0.1-SNAPSHOT.jar
-          target: /app/application.jar
     healthcheck:
       test: "curl --fail --silent localhost:8082/actuator/health/readiness | grep UP || exit 1"
       interval: 2s
@@ -146,11 +121,6 @@ services:
       - feign.url.user-service=http://product-service:8082
       - KEYCLOAK_ISSUER_URI=http://${KEYCLOAK_HOSTNAME}:8090/auth/realms/SpringBootKeycloak
       - EUREKA_URL=http://eureka-service:8761/eureka/
-    develop:
-      watch:
-        - action: sync+restart
-          path: ./backend/ecovida-inventory-service/target/ecovida-inventory-service-0.0.1-SNAPSHOT.jar
-          target: /app/application.jar
     healthcheck:
       test: "curl --fail --silent localhost:8083/actuator/health/readiness | grep UP || exit 1"
       interval: 2s
@@ -175,11 +145,6 @@ services:
       - feign.url.user-service=http://inventory-service:8083
       - KEYCLOAK_ISSUER_URI=http://${KEYCLOAK_HOSTNAME}:8090/auth/realms/SpringBootKeycloak
       - EUREKA_URL=http://eureka-service:8761/eureka/
-    develop:
-      watch:
-        - action: sync+restart
-          path: ./backend/ecovida-inventory-service/target/ecovida-inventory-service-0.0.1-SNAPSHOT.jar
-          target: /app/application.jar
     healthcheck:
       test: "curl --fail --silent localhost:8084/actuator/health/readiness | grep UP || exit 1"
       interval: 2s
@@ -192,15 +157,18 @@ services:
     ports:
     - "80:80"
     depends_on:
-      courses-service:
+      products-service:
         condition: service_healthy
       users-service:
         condition: service_healthy
-    develop:
-      watch:
-        - action: sync+restart
-          path: ./frontend/src
-          target: /app/src
+      order-service: 
+        condition: service_healthy
+      inventory-service:
+        condition: service_healthy
+      gateway-service: 
+        condition: service_healthy
+      msvc-auth:
+        condition: service_healthy
     environment:
       - USERS_SERVICE_ENDPOINT=http://localhost:8081
       - PRODUCTS_SERVICE_ENDPOINT=http://localhost:8082
