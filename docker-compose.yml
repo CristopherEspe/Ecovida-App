@@ -71,8 +71,10 @@ services:
     depends_on:
       gateway-service:
         condition: service_healthy
+      database-postgres-users:
+        condition: service_healthy
     environment:
-      - spring.datasource.url=jdbc:postgresql://database-postgres:5432/users_db
+      - spring.datasource.url=jdbc:postgresql://database-postgres-users:5432/users_db
       - KEYCLOAK_ISSUER_URI=http://${KEYCLOAK_HOSTNAME}:8090/auth/realms/SpringBootKeycloak
       - EUREKA_URL=http://eureka-service:8167/eureka/
     healthcheck:
@@ -90,10 +92,10 @@ services:
     depends_on:
       gateway-service:
         condition: service_healthy
-      database-postgres:
+      database-postgres-products:
         condition: service_healthy
     environment:
-      - spring.datasource.url=jdbc:postgresql://database-postgres:5432/products_db
+      - spring.datasource.url=jdbc:postgresql://database-postgres-products:5432/products_db
       - KEYCLOAK_ISSUER_URI=http://${KEYCLOAK_HOSTNAME}:8090/auth/realms/SpringBootKeycloak
       - EUREKA_URL=http://eureka-service:8761/eureka/
     healthcheck:
@@ -111,10 +113,10 @@ services:
     depends_on:
       gateway-service:
         condition: service_healthy
-      database-postgres:
+      database-postgres-inventory:
         condition: service_healthy
     environment:
-      - spring.datasource.url=jdbc:postgresql://database-postgres:5432/inventory_db
+      - spring.datasource.url=jdbc:postgresql://database-postgres-inventory:5432/inventory_db
       - feign.url.user-service=http://product-service:8082
       - KEYCLOAK_ISSUER_URI=http://${KEYCLOAK_HOSTNAME}:8090/auth/realms/SpringBootKeycloak
       - EUREKA_URL=http://eureka-service:8761/eureka/
@@ -133,10 +135,10 @@ services:
     depends_on:
       gateway-service:
         condition: service_healthy
-      database-postgres:
+      database-postgres-orders:
         condition: service_healthy
     environment:
-      - spring.datasource.url=jdbc:postgresql://database-postgres:5432/inventory_db
+      - spring.datasource.url=jdbc:postgresql://database-postgres-orders:5432/inventory_db
       - feign.url.user-service=http://user-service:8081
       - feign.url.user-service=http://product-service:8082
       - feign.url.user-service=http://inventory-service:8083
