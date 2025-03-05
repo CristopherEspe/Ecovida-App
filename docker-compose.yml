@@ -128,7 +128,7 @@ services:
       start_period: 2s
   order-service:
     container_name: order-service
-    build: ./backend/ecovida-inventory-service
+    build: ./backend/ecovida-order-service
     restart: always
     ports:
     - "8084:8084"
