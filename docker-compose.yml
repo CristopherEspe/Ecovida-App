@@ -48,13 +48,7 @@ services:
       - PRODUCTS_SERVICE_URL=http://courses-service:8082
       - INVENTORY_SERVICE_URL=http://inventory-service:8083
       - ORDERS_SERVICE_URL=http://orders-service:8084
-      - eureka.client.service-url.defaultZone=http://eureka-service:8761/eureka
-    healthcheck:
-      test: "curl --fail --silent localhost:8000/actuator/health/readiness | grep UP || exit 1"
-      interval: 2s
-      timeout: 3s
-      retries: 15
-      start_period: 15s
+      - eureka.client.service-url.defaultZone=http://eureka-service:8761/eurek
   user-service:
     container_name: users-service
     build: ./backend/ecovida-user-service
@@ -63,7 +57,7 @@ services:
     - "8081:8081"
     depends_on:
       gateway-service:
-        condition: service_healthy
+        condition: service_started
       database-postgres-users:
         condition: service_healthy
     environment:
@@ -105,7 +99,7 @@ services:
     - "8083:8083"
     depends_on:
       gateway-service:
-        condition: service_healthy
+        condition: service_started
       database-postgres-inventory:
         condition: service_healthy
     environment:
@@ -127,7 +121,7 @@ services:
     - "8084:8084"
     depends_on:
       gateway-service:
-        condition: service_healthy
+        condition: service_started
       database-postgres-orders:
         condition: service_healthy
     environment:
@@ -158,7 +152,7 @@ services:
       inventory-service:
         condition: service_healthy
       gateway-service: 
-        condition: service_healthy
+        condition: service_started
       msvc-auth:
         condition: service_started
     environment:
