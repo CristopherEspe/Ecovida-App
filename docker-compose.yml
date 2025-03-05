@@ -37,6 +37,8 @@ services:
     ports:
     - "8080:8080"
     depends_on:
+      eureka-service:
+        condition: service_started
       msvc-auth:
         condition: service_started
     environment:
@@ -46,6 +48,7 @@ services:
       - PRODUCTS_SERVICE_URL=http://courses-service:8082
       - INVENTORY_SERVICE_URL=http://inventory-service:8083
       - ORDERS_SERVICE_URL=http://orders-service:8084
+      - eureka.client.service-url.defaultZone=http://eureka-service:8761/eureka
     healthcheck:
       test: "curl --fail --silent localhost:8000/actuator/health/readiness | grep UP || exit 1"
       interval: 2s
