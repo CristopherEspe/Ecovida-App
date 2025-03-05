@@ -7,5 +7,4 @@ COPY ./target/*.jar application.jar
 
 EXPOSE 8083
 
-
 ENTRYPOINT ["java", "-jar", "application.jar"]
