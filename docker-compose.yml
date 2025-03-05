@@ -33,9 +33,9 @@ services:
     healthcheck:
       test: "curl --fail --silent localhost:8003/actuator/health/readiness | grep UP || exit 1"
       interval: 2s
-      timeout: 3s
-      retries: 15
-      start_period: 2s
+      timeout: 5s
+      retries: 30
+      start_period: 5s
   gateway-service:
     container_name: gateway-service
     build: ./backend/gateway-service
