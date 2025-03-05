@@ -156,9 +156,9 @@ services:
     ports:
     - "80:80"
     depends_on:
-      products-service:
+      product-service:
         condition: service_healthy
-      users-service:
+      user-service:
         condition: service_healthy
       order-service: 
         condition: service_healthy
