@@ -1,0 +1,293 @@
+version: '3'
+name: ecovida-app
+services:
+  eureka-service:
+    container_name: eureka-service
+    build: ./backend/eureka-server
+    restart: always
+    ports:
+    - "8761:8761"
+    environment:
+      - eureka.instance.hostname=eureka-service
+    develop:
+      watch:
+        - action: sync+restart
+          path: ./backend/eureka-server/target/eureka-server-0.0.1-SNAPSHOT.jar
+          target: /app/application.jar
+    healthcheck:
+      test: "curl --fail --silent localhost:8004/actuator/health/readiness | grep UP || exit 1"
+      interval: 2s
+      timeout: 3s
+      retries: 15
+      start_period: 2s
+  auth-service:
+    container_name: auth-service
+    build: ./backend/msvc-auth
+    restart: always
+    ports:
+    - "8090:8090"
+    depends_on:
+      eureka-service:
+        condition: service_healthy
+      database-postgres-auth:
+        condition: service_healthy
+    environment:
+      - spring.datasource.url=jdbc:postgresql://database-postgres-auth:5432/msvc-auth
+      - keycloak.connectionsJpa.url=jdbc:postgresql://database-postgres-auth:5432/msvc-auth
+      - spring.liquibase.enabled=false
+      - KEYCLOAK_ADMIN=ecovida_supp
+      - KEYCLOAK_ADMIN_PASSWORD=O8r3tP8wi4f2
+      - KEYCLOAK_IMPORT_FILE=/app/default-realm.json
+    develop:
+      watch:
+        - action: sync+restart
+          path: ./backend/msvc-auth/target/msvc-auth-0.0.1-SNAPSHOT.jar
+          target: /app/application.jar
+    healthcheck:
+      test: "curl --fail --silent localhost:8003/actuator/health/readiness | grep UP || exit 1"
+      interval: 2s
+      timeout: 3s
+      retries: 15
+      start_period: 2s
+  gateway-service:
+    container_name: gateway-service
+    build: ./backend/gateway-service
+    restart: always
+    ports:
+    - "8080:8080"
+    depends_on:
+      eureka-service:
+        condition: service_healthy
+      auth-service:
+        condition: service_healthy
+    environment:
+      - AUTH_SERVICE_URL=http://auth-service:8090
+      - EUREKA_SERVICE_URL=http://eureka-service:8761
+      - USERS_SERVICE_URL=http://users-service:8081
+      - PRODUCTS_SERVICE_URL=http://courses-service:8082
+      - INVENTORY_SERVICE_URL=http://inventory-service:8083
+      - ORDERS_SERVICE_URL=http://orders-service:8084
+    develop:
+      watch:
+        - action: sync+restart
+          path: ./backend/gateway-service/target/gateway-service-0.0.1-SNAPSHOT.jar
+          target: /app/application.jar
+    healthcheck:
+      test: "curl --fail --silent localhost:8000/actuator/health/readiness | grep UP || exit 1"
+      interval: 2s
+      timeout: 3s
+      retries: 15
+      start_period: 2s
+  users-service:
+    container_name: users-service
+    build: ./backend/ecovida-user-service
+    restart: always
+    ports:
+    - "8081:8081"
+    depends_on:
+      gateway-service:
+        condition: service_healthy
+      database-mysql:
+        condition: service_healthy
+    environment:
+      - spring.datasource.url=jdbc:postgresql://database-postgres:5432/users_db
+      - KEYCLOAK_ISSUER_URI=http://${KEYCLOAK_HOSTNAME}:8090/auth/realms/SpringBootKeycloak
+      - EUREKA_URL=http://eureka-service:8167/eureka/
+    develop:
+      watch:
+        - action: sync+restart
+          path: ./backend/ecovida-user-service/target/ecovida-user-service-0.0.1-SNAPSHOT.jar
+          target: /app/application.jar
+    healthcheck:
+      test: "curl --fail --silent localhost:8081/actuator/health/readiness | grep UP || exit 1"
+      interval: 2s
+      timeout: 3s
+      retries: 25
+      start_period: 2s
+  product-service:
+    container_name: product-service
+    build: ./backend/ecovida-product-service
+    restart: always
+    ports:
+    - "8082:8082"
+    depends_on:
+      gateway-service:
+        condition: service_healthy
+      database-postgres:
+        condition: service_healthy
+    environment:
+      - spring.datasource.url=jdbc:postgresql://database-postgres:5432/products_db
+      - KEYCLOAK_ISSUER_URI=http://${KEYCLOAK_HOSTNAME}:8090/auth/realms/SpringBootKeycloak
+      - EUREKA_URL=http://eureka-service:8761/eureka/
+    develop:
+      watch:
+        - action: sync+restart
+          path: ./backend/ecovida-product-service/target/ecovida-product-service-0.0.1-SNAPSHOT.jar
+          target: /app/application.jar
+    healthcheck:
+      test: "curl --fail --silent localhost:8082/actuator/health/readiness | grep UP || exit 1"
+      interval: 2s
+      timeout: 3s
+      retries: 25
+      start_period: 2s
+  inventory-service:
+    container_name: inventory-service
+    build: ./backend/ecovida-inventory-service
+    restart: always
+    ports:
+    - "8083:8083"
+    depends_on:
+      gateway-service:
+        condition: service_healthy
+      database-postgres:
+        condition: service_healthy
+    environment:
+      - spring.datasource.url=jdbc:postgresql://database-postgres:5432/inventory_db
+      - feign.url.user-service=http://product-service:8082
+      - KEYCLOAK_ISSUER_URI=http://${KEYCLOAK_HOSTNAME}:8090/auth/realms/SpringBootKeycloak
+      - EUREKA_URL=http://eureka-service:8761/eureka/
+    develop:
+      watch:
+        - action: sync+restart
+          path: ./backend/ecovida-inventory-service/target/ecovida-inventory-service-0.0.1-SNAPSHOT.jar
+          target: /app/application.jar
+    healthcheck:
+      test: "curl --fail --silent localhost:8083/actuator/health/readiness | grep UP || exit 1"
+      interval: 2s
+      timeout: 3s
+      retries: 25
+      start_period: 2s
+  order-service:
+    container_name: order-service
+    build: ./backend/ecovida-inventory-service
+    restart: always
+    ports:
+    - "8084:8084"
+    depends_on:
+      gateway-service:
+        condition: service_healthy
+      database-postgres:
+        condition: service_healthy
+    environment:
+      - spring.datasource.url=jdbc:postgresql://database-postgres:5432/inventory_db
+      - feign.url.user-service=http://user-service:8081
+      - feign.url.user-service=http://product-service:8082
+      - feign.url.user-service=http://inventory-service:8083
+      - KEYCLOAK_ISSUER_URI=http://${KEYCLOAK_HOSTNAME}:8090/auth/realms/SpringBootKeycloak
+      - EUREKA_URL=http://eureka-service:8761/eureka/
+    develop:
+      watch:
+        - action: sync+restart
+          path: ./backend/ecovida-inventory-service/target/ecovida-inventory-service-0.0.1-SNAPSHOT.jar
+          target: /app/application.jar
+    healthcheck:
+      test: "curl --fail --silent localhost:8084/actuator/health/readiness | grep UP || exit 1"
+      interval: 2s
+      timeout: 3s
+      retries: 25
+      start_period: 2s
+  webapp:
+    container_name: ecovida-webapp
+    build: ./frontend
+    ports:
+    - "80:80"
+    depends_on:
+      courses-service:
+        condition: service_healthy
+      users-service:
+        condition: service_healthy
+    develop:
+      watch:
+        - action: sync+restart
+          path: ./frontend/src
+          target: /app/src
+    environment:
+      - USERS_SERVICE_ENDPOINT=http://localhost:8081
+      - PRODUCTS_SERVICE_ENDPOINT=http://localhost:8082
+      - INVENTORY_SERVICE_ENDPOINT=http://localhost:8083
+      - ORDERS_SERVICE_ENDPOINT=http://localhost:8084
+      - GATEWAY_ENDPOINT=http://${GATEWAY_HOSTNAME}:8080
+      - KEYCLOAK_URL=http://${KEYCLOAK_HOSTNAME}:8090/auth
+      - KEYCLOAK_REALM=SpringBootKeycloak
+      - KEYCLOAK_CLIENT_ID=EcovidaClient
+    healthcheck:
+          test: [ "CMD", "curl", "--fail", "-G", "http://localhost:4200" ]
+          interval: 2s
+          timeout: 3s
+          retries: 30
+          start_period: 10s
+  database-postgres-users:
+    container_name: database-postgres-users
+    image: "postgres:latest"
+    ports:
+    - "5433:5432"
+    environment:
+    - POSTGRES_USER=ecovida-postgres
+    - POSTGRES_PASSWORD=A2QjQxdSIs9rNJ8YbXewmraEcqMz45BDDSzVFjWzkw5XjxP9Q1
+    - POSTGRES_DB=users_db
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres"]
+      interval: 2s
+      timeout: 3s
+      retries: 10
+      start_period: 2s
+  database-postgres-products:
+    container_name: database-postgres-products
+    image: "postgres:latest"
+    ports:
+    - "5432:5432"
+    environment:
+    - POSTGRES_USER=ecovida-postgres
+    - POSTGRES_PASSWORD=A2QjQxdSIs9rNJ8YbXewmraEcqMz45BDDSzVFjWzkw5XjxP9Q1
+    - POSTGRES_DB=products_db
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres"]
+      interval: 2s
+      timeout: 3s
+      retries: 10
+      start_period: 2s
+  database-postgres-inventory:
+    container_name: database-postgres-inventory
+    image: "postgres:latest"
+    ports:
+    - "5431:5432"
+    environment:
+    - POSTGRES_USER=ecovida-postgres
+    - POSTGRES_PASSWORD=A2QjQxdSIs9rNJ8YbXewmraEcqMz45BDDSzVFjWzkw5XjxP9Q1
+    - POSTGRES_DB=inventory_db
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres"]
+      interval: 2s
+      timeout: 3s
+      retries: 10
+      start_period: 2s
+  database-postgres-orders:
+    container_name: database-postgres-orders
+    image: "postgres:latest"
+    ports:
+    - "5430:5432"
+    environment:
+    - POSTGRES_USER=ecovida-postgres
+    - POSTGRES_PASSWORD=A2QjQxdSIs9rNJ8YbXewmraEcqMz45BDDSzVFjWzkw5XjxP9Q1
+    - POSTGRES_DB=orders_db
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres"]
+      interval: 2s
+      timeout: 3s
+      retries: 10
+      start_period: 2s
+  database-postgres-auth:
+    container_name: database-postgres-auth
+    image: "postgres:latest"
+    ports:
+    - "5434:5432"
+    environment:
+    - POSTGRES_USER=postgres
+    - POSTGRES_PASSWORD=postgres
+    - POSTGRES_DB=msvc-auth
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres"]
+      interval: 2s
+      timeout: 3s
+      retries: 10
+      start_period: 2s
