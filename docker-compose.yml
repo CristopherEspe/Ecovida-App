@@ -78,7 +78,7 @@ services:
     - "8082:8082"
     depends_on:
       gateway-service:
-        condition: service_healthy
+        condition: service_started
       database-postgres-products:
         condition: service_healthy
     environment:
