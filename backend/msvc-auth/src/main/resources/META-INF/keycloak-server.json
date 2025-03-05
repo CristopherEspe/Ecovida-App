@@ -95,7 +95,7 @@
 
     "connectionsJpa": {
         "default": {
-            "url": "${keycloak.connectionsJpa.url:jdbc:postgresql://localhost:5432/msvc-auth}",
+            "url": "${keycloak.connectionsJpa.url:jdbc:postgresql://database-postgres-auth:5432/msvc-auth}",
             "driver": "${keycloak.connectionsJpa.driver:org.postgresql.Driver}",
             "driverDialect": "${keycloak.connectionsJpa.driverDialect:}",
             "user": "${keycloak.connectionsJpa.user:postgres}",
