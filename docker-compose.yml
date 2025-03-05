@@ -245,8 +245,8 @@ services:
     ports:
     - "5434:5432"
     environment:
-    - POSTGRES_USER=postgres
-    - POSTGRES_PASSWORD=postgres
+    - POSTGRES_USER=ecovida-postgres
+    - POSTGRES_PASSWORD=A2QjQxdSIs9rNJ8YbXewmraEcqMz45BDDSzVFjWzkw5XjxP9Q1
     - POSTGRES_DB=msvc-auth
     healthcheck:
       test: ["CMD", "pg_isready", "-U", "postgres"]
