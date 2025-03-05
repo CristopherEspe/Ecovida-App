@@ -14,7 +14,7 @@ services:
       timeout: 3s
       retries: 15
       start_period: 2s
-  auth-service:
+  msvc-auth:
     container_name: auth-service
     build: ./backend/msvc-auth
     restart: always
