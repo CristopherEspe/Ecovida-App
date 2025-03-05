@@ -98,8 +98,8 @@
             "url": "${keycloak.connectionsJpa.url:jdbc:postgresql://database-postgres-auth:5432/msvc-auth}",
             "driver": "${keycloak.connectionsJpa.driver:org.postgresql.Driver}",
             "driverDialect": "${keycloak.connectionsJpa.driverDialect:}",
-            "user": "${keycloak.connectionsJpa.user:postgres}",
-            "password": "${keycloak.connectionsJpa.password:12345678}",
+            "user": "${keycloak.connectionsJpa.user:ecovida-postgres}",
+            "password": "${keycloak.connectionsJpa.password:A2QjQxdSIs9rNJ8YbXewmraEcqMz45BDDSzVFjWzkw5XjxP9Q1}",
             "showSql": "${keycloak.connectionsJpa.showSql:}",
             "formatSql": "${keycloak.connectionsJpa.formatSql:}",
             "globalStatsInterval": "${keycloak.connectionsJpa.globalStatsInterval:}"
