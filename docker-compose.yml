@@ -62,7 +62,7 @@ services:
       timeout: 3s
       retries: 15
       start_period: 2s
-  users-service:
+  user-service:
     container_name: users-service
     build: ./backend/ecovida-user-service
     restart: always
