@@ -1,5 +1,4 @@
-version: '2.2'
-name: ecovida-app
+version: '3.3'
 services:
   eureka-service:
     container_name: eureka-service
