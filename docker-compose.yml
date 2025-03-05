@@ -30,12 +30,6 @@ services:
       - KEYCLOAK_ADMIN=ecovida_supp
       - KEYCLOAK_ADMIN_PASSWORD=O8r3tP8wi4f2
       - KEYCLOAK_IMPORT_FILE=/app/default-realm.json
-    healthcheck:
-      test: "curl --fail --silent localhost:8003/actuator/health/readiness | grep UP || exit 1"
-      interval: 2s
-      timeout: 5s
-      retries: 30
-      start_period: 5s
   gateway-service:
     container_name: gateway-service
     build: ./backend/gateway-service
@@ -44,7 +38,7 @@ services:
     - "8080:8080"
     depends_on:
       msvc-auth:
-        condition: service_healthy
+        condition: service_started
     environment:
       - AUTH_SERVICE_URL=http://msvc-auth:8090
       - EUREKA_SERVICE_URL=http://eureka-service:8761
@@ -163,7 +157,7 @@ services:
       gateway-service: 
         condition: service_healthy
       msvc-auth:
-        condition: service_healthy
+        condition: service_started
     environment:
       - USERS_SERVICE_ENDPOINT=http://localhost:8081
       - PRODUCTS_SERVICE_ENDPOINT=http://localhost:8082
