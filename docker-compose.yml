@@ -71,8 +71,6 @@ services:
     depends_on:
       gateway-service:
         condition: service_healthy
-      database-mysql:
-        condition: service_healthy
     environment:
       - spring.datasource.url=jdbc:postgresql://database-postgres:5432/users_db
       - KEYCLOAK_ISSUER_URI=http://${KEYCLOAK_HOSTNAME}:8090/auth/realms/SpringBootKeycloak
