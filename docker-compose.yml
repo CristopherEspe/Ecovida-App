@@ -62,7 +62,7 @@ services:
         condition: service_healthy
     environment:
       - spring.datasource.url=jdbc:postgresql://database-postgres-users:5432/users_db
-      - KEYCLOAK_ISSUER_URI=http://${KEYCLOAK_HOSTNAME}:8090/auth/realms/SpringBootKeycloak
+      - KEYCLOAK_ISSUER_URI=http://msvc-auth:8090/auth/realms/SpringBootKeycloak
       - EUREKA_URL=http://eureka-service:8167/eureka/
     healthcheck:
       test: "curl --fail --silent localhost:8081/actuator/health/readiness | grep UP || exit 1"
@@ -83,7 +83,7 @@ services:
         condition: service_healthy
     environment:
       - spring.datasource.url=jdbc:postgresql://database-postgres-products:5432/products_db
-      - KEYCLOAK_ISSUER_URI=http://${KEYCLOAK_HOSTNAME}:8090/auth/realms/SpringBootKeycloak
+      - KEYCLOAK_ISSUER_URI=http://msvc-auth:8090/auth/realms/SpringBootKeycloak
       - EUREKA_URL=http://eureka-service:8761/eureka/
     healthcheck:
       test: "curl --fail --silent localhost:8082/actuator/health/readiness | grep UP || exit 1"
