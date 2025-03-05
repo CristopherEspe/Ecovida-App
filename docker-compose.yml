@@ -189,7 +189,7 @@ services:
     - POSTGRES_PASSWORD=A2QjQxdSIs9rNJ8YbXewmraEcqMz45BDDSzVFjWzkw5XjxP9Q1
     - POSTGRES_DB=users_db
     healthcheck:
-      test: ["CMD", "pg_isready", "-U", "ecovida-postgres"]
+      test: ["CMD", "pg_isready"]
       interval: 2s
       timeout: 3s
       retries: 10
@@ -204,7 +204,7 @@ services:
     - POSTGRES_PASSWORD=A2QjQxdSIs9rNJ8YbXewmraEcqMz45BDDSzVFjWzkw5XjxP9Q1
     - POSTGRES_DB=products_db
     healthcheck:
-      test: ["CMD", "pg_isready", "-U", "ecovida-postgres"]
+      test: ["CMD", "pg_isready"]
       interval: 2s
       timeout: 3s
       retries: 10
@@ -219,7 +219,7 @@ services:
     - POSTGRES_PASSWORD=A2QjQxdSIs9rNJ8YbXewmraEcqMz45BDDSzVFjWzkw5XjxP9Q1
     - POSTGRES_DB=inventory_db
     healthcheck:
-      test: ["CMD", "pg_isready", "-U", "ecovida-postgres"]
+      test: ["CMD", "pg_isready"]
       interval: 2s
       timeout: 3s
       retries: 10
@@ -234,7 +234,7 @@ services:
     - POSTGRES_PASSWORD=A2QjQxdSIs9rNJ8YbXewmraEcqMz45BDDSzVFjWzkw5XjxP9Q1
     - POSTGRES_DB=orders_db
     healthcheck:
-      test: ["CMD", "pg_isready", "-U", "ecovida-postgres"]
+      test: ["CMD", "pg_isready"]
       interval: 2s
       timeout: 3s
       retries: 10
@@ -249,7 +249,7 @@ services:
     - POSTGRES_PASSWORD=A2QjQxdSIs9rNJ8YbXewmraEcqMz45BDDSzVFjWzkw5XjxP9Q1
     - POSTGRES_DB=msvc-auth
     healthcheck:
-      test: ["CMD", "pg_isready", "-U", "ecovida-postgres"]
+      test: ["CMD", "pg_isready"]
       interval: 2s
       timeout: 3s
       retries: 10
