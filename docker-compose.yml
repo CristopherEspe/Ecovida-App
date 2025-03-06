@@ -108,7 +108,7 @@ services:
         condition: service_healthy
     environment:
       - spring.datasource.url=jdbc:postgresql://database-postgres-inventory:5432/inventory_db
-      - feign.url.user-service=http://product-service:8082
+      - app.feign.product-service.url=http://product-service:8082
       - spring.security.oauth2.resourceserver.jwt.issuer-uri=http://msvc-auth:8090/auth/realms/SpringBootKeycloak
       - eureka.client.service-url.defaultZone=http://eureka-service:8761/eureka/
       - KEYCLOAK_ISSUER_URI=http://${KEYCLOAK_HOSTNAME}:8090/auth/realms/SpringBootKeycloak
