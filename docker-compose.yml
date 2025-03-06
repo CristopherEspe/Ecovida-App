@@ -64,6 +64,8 @@ services:
       - spring.datasource.url=jdbc:postgresql://database-postgres-users:5432/users_db
       - KEYCLOAK_ISSUER_URI=http://${KEYCLOAK_HOSTNAME}:8090/auth/realms/SpringBootKeycloak
       - EUREKA_URL=http://eureka-service:8167/eureka/
+      - spring.security.oauth2.resourceserver.jwt.issuer-uri=http://msvc-auth:8090/auth/realms/SpringBootKeycloak
+      - eureka.client.service-url.defaultZone=http://eureka-service:8761/eureka/
     healthcheck:
       test: "curl --fail --silent localhost:8081/actuator/health/readiness | grep UP || exit 1"
       interval: 2s
@@ -85,7 +87,7 @@ services:
       - spring.datasource.url=jdbc:postgresql://database-postgres-products:5432/products_db
       - KEYCLOAK_ISSUER_URI=http://${KEYCLOAK_HOSTNAME}:8090/auth/realms/SpringBootKeycloak
       - EUREKA_URL=http://eureka-service:8761/eureka/
-      - spring.security.oauth2.resourceserver.jwt.issuer-uri=http://gateway-service:8090/auth/realms/SpringBootKeycloak
+      - spring.security.oauth2.resourceserver.jwt.issuer-uri=http://msvc-auth:8090/auth/realms/SpringBootKeycloak
       - eureka.client.service-url.defaultZone=http://eureka-service:8761/eureka/
     healthcheck:
       test: "curl --fail --silent localhost:8082/actuator/health/readiness | grep UP || exit 1"
@@ -107,6 +109,8 @@ services:
     environment:
       - spring.datasource.url=jdbc:postgresql://database-postgres-inventory:5432/inventory_db
       - feign.url.user-service=http://product-service:8082
+      - spring.security.oauth2.resourceserver.jwt.issuer-uri=http://msvc-auth:8090/auth/realms/SpringBootKeycloak
+      - eureka.client.service-url.defaultZone=http://eureka-service:8761/eureka/
       - KEYCLOAK_ISSUER_URI=http://${KEYCLOAK_HOSTNAME}:8090/auth/realms/SpringBootKeycloak
       - EUREKA_URL=http://eureka-service:8761/eureka/
     healthcheck:
@@ -127,11 +131,13 @@ services:
       database-postgres-orders:
         condition: service_healthy
     environment:
-      - spring.datasource.url=jdbc:postgresql://database-postgres-orders:5432/inventory_db
+      - spring.datasource.url=jdbc:postgresql://database-postgres-orders:5432/orders_db
       - feign.url.user-service=http://user-service:8081
       - feign.url.user-service=http://product-service:8082
       - feign.url.user-service=http://inventory-service:8083
       - KEYCLOAK_ISSUER_URI=http://${KEYCLOAK_HOSTNAME}:8090/auth/realms/SpringBootKeycloak
+      - spring.security.oauth2.resourceserver.jwt.issuer-uri=http://msvc-auth:8090/auth/realms/SpringBootKeycloak
+      - eureka.client.service-url.defaultZone=http://eureka-service:8761/eureka/
       - EUREKA_URL=http://eureka-service:8761/eureka/
     healthcheck:
       test: "curl --fail --silent localhost:8084/actuator/health/readiness | grep UP || exit 1"
@@ -149,11 +155,11 @@ services:
         condition: service_healthy
       user-service:
         condition: service_healthy
-      order-service: 
+      order-service:
         condition: service_healthy
       inventory-service:
         condition: service_healthy
-      gateway-service: 
+      gateway-service:
         condition: service_started
       msvc-auth:
         condition: service_started
@@ -191,7 +197,7 @@ services:
     container_name: database-postgres-products
     image: "postgres:latest"
     ports:
-    - "5432:5432"
+    - "5431:5432"
     environment:
     - POSTGRES_USER=ecovida-postgres
     - POSTGRES_PASSWORD=A2QjQxdSIs9rNJ8YbXewmraEcqMz45BDDSzVFjWzkw5XjxP9Q1
@@ -206,7 +212,7 @@ services:
     container_name: database-postgres-inventory
     image: "postgres:latest"
     ports:
-    - "5431:5432"
+    - "5430:5432"
     environment:
     - POSTGRES_USER=ecovida-postgres
     - POSTGRES_PASSWORD=A2QjQxdSIs9rNJ8YbXewmraEcqMz45BDDSzVFjWzkw5XjxP9Q1
@@ -221,7 +227,7 @@ services:
     container_name: database-postgres-orders
     image: "postgres:latest"
     ports:
-    - "5430:5432"
+    - "5434:5432"
     environment:
     - POSTGRES_USER=ecovida-postgres
     - POSTGRES_PASSWORD=A2QjQxdSIs9rNJ8YbXewmraEcqMz45BDDSzVFjWzkw5XjxP9Q1
@@ -236,7 +242,7 @@ services:
     container_name: database-postgres-auth
     image: "postgres:latest"
     ports:
-    - "5434:5432"
+    - "5435:5432"
     environment:
     - POSTGRES_USER=ecovida-postgres
     - POSTGRES_PASSWORD=A2QjQxdSIs9rNJ8YbXewmraEcqMz45BDDSzVFjWzkw5XjxP9Q1
