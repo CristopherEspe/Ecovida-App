@@ -1,51 +1,44 @@
 #!/bin/bash
 
-# Guarda el directorio actual
-rootpath=$(pwd)
+# Obtener la ruta del script
+rootpath="$(dirname "$(realpath "$0")")"
 
-# Navega a la carpeta 'backend'
 cd "$rootpath/backend"
 
-# Establece las rutas de los servicios
-ecovida-inventory-service_path="$PWD/ecovida-inventory-service"
-ecovida-order-service_path="$PWD/ecovida-order-service"
-ecovida-product-service_path="$PWD/ecovida-product-service"
-ecovida-user-service_path="$PWD/ecovida-user-service"
-eureka-server_path="$PWD/eureka-server"
-gateway-service_path="$PWD/gateway-service"
-msvc-auth_path="$PWD/msvc-auth"
+ecovida_inventory_service_path="$PWD/ecovida-inventory-service"
+ecovida_order_service_path="$PWD/ecovida-order-service"
+ecovida_product_service_path="$PWD/ecovida-product-service"
+ecovida_user_service_path="$PWD/ecovida-user-service"
+eureka_server_path="$PWD/eureka-server"
+gateway_service_path="$PWD/gateway-service"
+msvc_auth_path="$PWD/msvc-auth"
+
+chmod +x "$ecovida_inventory_service_path/build.sh"
+chmod +x "$ecovida_order_service_path/build.sh"
+chmod +x "$ecovida_product_service_path/build.sh"
+chmod +x "$ecovida_user_service_path/build.sh"
+chmod +x "$eureka_server_path/build.sh"
+chmod +x "$gateway_service_path/build.sh"
+chmod +x "$msvc_auth_path/build.sh"
 
 echo "Building backend services"
 
-echo "Building eureka server"
-cd "$eureka-server_path"
-./build.sh
+services=(
+    "inventory service:$ecovida_inventory_service_path"
+    "order service:$ecovida_order_service_path"
+    "product service:$ecovida_product_service_path"
+    "user service:$ecovida_user_service_path"
+    "eureka server:$eureka_server_path"
+    "gateway service:$gateway_service_path"
+    "auth service:$msvc_auth_path"
+)
 
-echo "Building gateway service"
-cd "$gateway-service_path"
-./build.sh
-
-echo "Building inventory service"
-cd "$ecovida-inventory-service_path"
-./build.sh
-
-echo "Building order service"
-cd "$ecovida-order-service_path"
-./build.sh
-
-echo "Building product service"
-cd "$ecovida-product-service_path"
-./build.sh
-
-echo "Building user service"
-cd "$ecovida-user-service_path"
-./build.sh
-
-echo "Building auth service"
-cd "$auth_service_path"
-./build.sh
+for service in "${services[@]}"; do
+    IFS=":" read -r name path <<< "$service"
+    echo "Building $name"
+    cd "$path" || exit 1
+    ./build.sh || { echo "Error building $name"; exit 1; }
+done
 
 echo "Backend services build completed"
-
-# Regresa al directorio original
 cd "$rootpath"
