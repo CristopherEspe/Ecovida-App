@@ -38,7 +38,7 @@ public class Config {
 		config.setAllowedOrigins(List.of(
 				"http://localhost:4200",
 				"http://localhost",
-				"http://20.197.227.154"
+				"http://20.55.108.68"
 		));
 		config.addAllowedHeader("*");
 		config.setAllowedMethods(

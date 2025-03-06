@@ -50,7 +50,7 @@ public class GatewayConfig {
         corsConfiguration.setAllowedOrigins(List.of(
                 "http://localhost:4200",
                 "http://localhost",
-                "http://20.197.227.154"
+                "http://20.55.108.68"
         ));
         corsConfiguration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH", "HEAD"));
         corsConfiguration.setAllowedHeaders(List.of("*"));
